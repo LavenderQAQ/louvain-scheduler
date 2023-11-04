@@ -1,0 +1,12 @@
+apiVersion: sched.kasterism.io/v1alpha1
+kind: Graph
+metadata:
+  labels:
+    app.kubernetes.io/name: graph
+    app.kubernetes.io/instance: graph-sample
+    app.kubernetes.io/part-of: graph
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: graph
+  name: graph-sample
+spec:
+  # TODO(user): Add fields here

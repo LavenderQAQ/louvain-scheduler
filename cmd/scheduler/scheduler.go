@@ -14,24 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package plugin
+package scheduler
 
 import (
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/kubernetes/pkg/scheduler/framework"
+	"github.com/LavenderQAQ/louvain-scheduler/pkg/plugin"
+	_ "k8s.io/component-base/logs/json/register"
+	"k8s.io/kubernetes/cmd/kube-scheduler/app"
 )
 
-const Name = "louvain-scheduler"
+func Start() error {
+	cmd := app.NewSchedulerCommand(
+		app.WithPlugin(plugin.Name, plugin.New),
+	)
 
-type louvainScheduler struct{}
-
-// var _ framework.FilterPlugin = &louvainScheduler{}
-// var _ framework.PreScorePlugin = &louvainScheduler{}
-
-func New(_ runtime.Object, _ framework.Handle) (framework.Plugin, error) {
-	return &louvainScheduler{}, nil
-}
-
-func (ls *louvainScheduler) Name() string {
-	return Name
+	return cmd.Execute()
 }
