@@ -1,0 +1,13 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: louvain-scheduler-clusterrolebinding
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: louvain-scheduler-clusterrole
+subjects:
+  - kind: ServiceAccount
+    name: louvain-scheduler
+    namespace: {{ .Release.Namespace }}

@@ -1,6 +1,6 @@
 
 # Image URL to use all building/pushing image targets
-IMG ?= louvain-scheduler:latest
+IMG ?= lavenderqaq/louvain-scheduler:latest
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.28.0
 
@@ -46,7 +46,7 @@ help: ## Display this help.
 
 .PHONY: manifests
 manifests: controller-gen ## Generate WebhookConfiguration, ClusterRole and CustomResourceDefinition objects.
-	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
+	$(CONTROLLER_GEN) rbac:roleName=louvain-scheduler-clusterrole crd webhook paths="./pkg/..." output:crd:artifacts:config=charts/louvain-scheduler/crds output:rbac:artifacts:config=charts/louvain-scheduler/templates output:webhook:artifacts:config=charts/louvain-scheduler/templates
 
 .PHONY: generate
 generate: controller-gen ## Generate code containing DeepCopy, DeepCopyInto, and DeepCopyObject method implementations.
@@ -84,7 +84,7 @@ lint-fix: golangci-lint ## Run golangci-lint linter and perform fixes
 
 .PHONY: build
 build: manifests generate fmt vet ## Build manager binary.
-	go build -o bin/manager cmd/main.go
+	CGO_ENABLED=0 go build -o bin/manager cmd/main.go
 
 .PHONY: run
 run: manifests generate fmt vet ## Run a controller from your host.
@@ -94,11 +94,11 @@ run: manifests generate fmt vet ## Run a controller from your host.
 # (i.e. docker build --platform linux/arm64). However, you must enable docker buildKit for it.
 # More info: https://docs.docker.com/develop/develop-images/build_enhancements/
 .PHONY: docker-build
-docker-build: ## Build docker image with the manager.
+docker-build: build ## Build docker image with the manager.
 	$(CONTAINER_TOOL) build -t ${IMG} .
 
 .PHONY: docker-push
-docker-push: ## Push docker image with the manager.
+docker-push: docker-build ## Push docker image with the manager.
 	$(CONTAINER_TOOL) push ${IMG}
 
 # PLATFORMS defines the target platforms for the manager image be built to provide support to multiple

@@ -1,4 +1,0 @@
-## Append samples of your project ##
-resources:
-- sched_v1alpha1_graph.yaml
-#+kubebuilder:scaffold:manifestskustomizesamples

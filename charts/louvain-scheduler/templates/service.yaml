@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: louvain-scheduler-webhook-service
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "louvain-scheduler.labels" . | nindent 4 }}
+spec:
+  ports:
+    - port: 443
+      targetPort: {{ .Values.ports.webhook }}
+      protocol: TCP
+      name: https
+    - port: {{ .Values.ports.metrics }}
+      protocol: TCP
+      targetPort: {{ .Values.ports.metrics }}
+      name: metrics
+  selector:
+    {{- include "louvain-scheduler.selectorLabels" . | nindent 4 }}
