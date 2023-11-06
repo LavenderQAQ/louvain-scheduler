@@ -19,38 +19,38 @@ package main
 import (
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
 	// to ensure that exec-entrypoint and run can make use of them.
-	"flag"
+
 	"os"
 
 	"github.com/LavenderQAQ/louvain-scheduler/cmd/operator"
 	"github.com/LavenderQAQ/louvain-scheduler/cmd/scheduler"
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
-	ctrl "sigs.k8s.io/controller-runtime"
+	"k8s.io/klog/v2"
 )
 
 var (
-	setupLog = ctrl.Log.WithName("setup")
+	setupLog = klog.New(klog.Background().GetSink())
 )
 
 func main() {
-	var metricsAddr string
-	var enableLeaderElection bool
-	var probeAddr string
-	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
-	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
-	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
-		"Enable leader election for controller manager. "+
-			"Enabling this will ensure there is only one active controller manager.")
+	// var metricsAddr string
+	// var enableLeaderElection bool
+	// var probeAddr string
+	// flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
+	// flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
+	// flag.BoolVar(&enableLeaderElection, "leader-elect", false,
+	// 	"Enable leader election for controller manager. "+
+	// 		"Enabling this will ensure there is only one active controller manager.")
 
 	go func() {
-		if err := scheduler.Start(); err != nil {
-			setupLog.Error(err, "unable to run scheduler")
+		if err := operator.Start(setupLog, ":8080", false, ":8081"); err != nil {
+			setupLog.Error(err, "unable to run manager")
 			os.Exit(1)
 		}
 	}()
 
-	if err := operator.Start(setupLog, metricsAddr, enableLeaderElection, probeAddr); err != nil {
-		setupLog.Error(err, "unable to run manager")
+	if err := scheduler.Start(); err != nil {
+		setupLog.Error(err, "unable to run scheduler")
 		os.Exit(1)
 	}
 }
